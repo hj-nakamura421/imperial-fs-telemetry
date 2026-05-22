@@ -245,5 +245,5 @@ with tab_laps:
 st.divider()
 st.caption(
     "Built by a Formula Student team member for the Formula Student team. "
-    "Source: github.com/hj-nakamura/fs-drivetrain-analyzer"
+    "Source: github.com/hj-nakamura421/imperial-fs-telemetry"
 )
