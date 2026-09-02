@@ -1,6 +1,9 @@
 # Formula Student EV Drivetrain Telemetry Debrief
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://imperial-fs-telemetry.streamlit.app/)
 [![CI](https://github.com/hj-nakamura421/imperial-fs-telemetry/actions/workflows/ci.yml/badge.svg)](https://github.com/hj-nakamura421/imperial-fs-telemetry/actions/workflows/ci.yml)
+
+**Live application:** [imperial-fs-telemetry.streamlit.app](https://imperial-fs-telemetry.streamlit.app/)
 
 A small, review-led telemetry tool for Formula Student EV test sessions. It turns timestamped drivetrain signals into a concise debrief: thermal and voltage-sag events, lap-level energy use, and a clearly stated next check for each issue.
 
