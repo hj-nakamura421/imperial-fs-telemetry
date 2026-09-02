@@ -1,7 +1,7 @@
 [project]
 name = "imperial-fs-telemetry"
-version = "0.1.0"
-description = "Formula Student EV drivetrain telemetry analysis and anomaly detection."
+version = "0.2.0"
+description = "Review-led Formula Student EV drivetrain telemetry debrief and event detection."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
