@@ -21,11 +21,16 @@ from telemetry import (
 DATA_PATH = Path(__file__).parent / "data" / "sample_run.csv"
 DEFAULT_THRESHOLDS = Thresholds()
 
-st.set_page_config(page_title="FS drivetrain debrief", page_icon="🏁", layout="wide")
-st.title("Formula Student EV drivetrain debrief")
-st.caption(
-    "A post-run review workspace for finding thermal, electrical and energy-management questions quickly. "
-    "The bundled session is a labelled synthetic demonstration, not an official team log."
+st.set_page_config(page_title="FS EV test-data debrief", page_icon="🏁", layout="wide")
+st.title("Formula Student EV Test-Data Debrief")
+st.write(
+    "Independent engineering portfolio prototype by HJ Nakamura for turning EV drivetrain telemetry "
+    "into a structured post-run review."
+)
+st.info(
+    "The public demonstration uses synthetic data with physically consistent power relationships and "
+    "deliberately injected review scenarios. It is not an official Imperial Formula Student tool or team "
+    "dataset, and has not been deployed by the team."
 )
 
 
@@ -52,15 +57,19 @@ with st.sidebar:
 
     st.caption(source_label)
     st.divider()
-    st.subheader("Review limits")
-    motor_limit = st.number_input("Motor temperature limit (°C)", 60, 160, int(DEFAULT_THRESHOLDS.motor_temp_c))
+    st.subheader("Demonstration review thresholds")
+    st.caption(
+        "Defaults are illustrative review values, not claimed limits of Imperial Racing Green hardware. "
+        "The nominal pack voltage is also a demonstration assumption."
+    )
+    motor_limit = st.number_input("Motor temperature threshold (°C)", 60, 160, int(DEFAULT_THRESHOLDS.motor_temp_c))
     inverter_limit = st.number_input(
-        "Inverter temperature limit (°C)", 40, 140, int(DEFAULT_THRESHOLDS.inverter_temp_c)
+        "Inverter temperature threshold (°C)", 40, 140, int(DEFAULT_THRESHOLDS.inverter_temp_c)
     )
     nominal_pack_voltage_v = st.number_input("Nominal pack voltage (V)", 400, 900, 600)
     default_sag_limit = min(int(DEFAULT_THRESHOLDS.pack_voltage_v), int(nominal_pack_voltage_v))
     sag_limit = st.number_input(
-        "Pack voltage sag limit (V)", 300, int(nominal_pack_voltage_v), default_sag_limit
+        "Pack voltage review threshold (V)", 300, int(nominal_pack_voltage_v), default_sag_limit
     )
 
 thresholds = Thresholds(
@@ -100,6 +109,11 @@ with debrief_tab:
             "then assign the next investigation rather than treating a threshold breach as a root cause."
         )
         st.dataframe(review_log, width="stretch", hide_index=True)
+        st.caption(
+            "Review labels use a demonstration heuristic: a worst sample at least 5% beyond its threshold "
+            "is labelled 'Priority review'; other breaches are 'Review'. This is not a calibrated risk score "
+            "or a comparison of severity across signals."
+        )
         st.download_button(
             "Download review log as CSV",
             review_log.to_csv(index=False),
@@ -150,8 +164,8 @@ with thermal_tab:
         "Drivetrain temperatures",
         {"motor_temp_c": "Temperature (°C)", "inverter_temp_c": "Temperature (°C)"},
     )
-    thermal_figure.add_hline(y=thresholds.motor_temp_c, line_dash="dash", line_color="#ef553b", annotation_text="motor limit")
-    thermal_figure.add_hline(y=thresholds.inverter_temp_c, line_dash="dot", line_color="#ffa15a", annotation_text="inverter limit")
+    thermal_figure.add_hline(y=thresholds.motor_temp_c, line_dash="dash", line_color="#ef553b", annotation_text="motor review threshold")
+    thermal_figure.add_hline(y=thresholds.inverter_temp_c, line_dash="dot", line_color="#ffa15a", annotation_text="inverter review threshold")
     st.plotly_chart(thermal_figure, width="stretch")
 
 with electrical_tab:
@@ -162,7 +176,7 @@ with electrical_tab:
         title="Accumulator pack voltage",
         labels={"time_s": "Time (s)", "battery_voltage_v": "Pack voltage (V)"},
     )
-    voltage_figure.add_hline(y=thresholds.pack_voltage_v, line_dash="dash", line_color="#ef553b", annotation_text="sag limit")
+    voltage_figure.add_hline(y=thresholds.pack_voltage_v, line_dash="dash", line_color="#ef553b", annotation_text="voltage review threshold")
     st.plotly_chart(voltage_figure, width="stretch")
     st.plotly_chart(
         px.line(

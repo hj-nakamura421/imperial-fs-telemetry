@@ -31,7 +31,7 @@ class TelemetryValidationError(ValueError):
 
 @dataclass(frozen=True)
 class Thresholds:
-    """Engineering review limits, configured at runtime in the dashboard."""
+    """Illustrative review thresholds, not verified team hardware limits."""
 
     motor_temp_c: float = 100.0
     inverter_temp_c: float = 80.0
@@ -82,7 +82,7 @@ class TelemetryEvent:
 _SIGNAL_RULES = (
     {
         "signal": "motor_temperature",
-        "title": "Motor temperature limit exceeded",
+        "title": "Motor temperature review threshold exceeded",
         "column": "motor_temp_c",
         "threshold_name": "motor_temp_c",
         "operator": "above",
@@ -94,7 +94,7 @@ _SIGNAL_RULES = (
     },
     {
         "signal": "inverter_temperature",
-        "title": "Inverter temperature limit exceeded",
+        "title": "Inverter temperature review threshold exceeded",
         "column": "inverter_temp_c",
         "threshold_name": "inverter_temp_c",
         "operator": "above",
@@ -106,7 +106,7 @@ _SIGNAL_RULES = (
     },
     {
         "signal": "pack_voltage",
-        "title": "Pack voltage sag limit exceeded",
+        "title": "Pack voltage below review threshold",
         "column": "battery_voltage_v",
         "threshold_name": "pack_voltage_v",
         "operator": "below",
@@ -253,6 +253,11 @@ def _median_sample_interval_s(frame: pd.DataFrame) -> float:
 
 
 def _severity(rule: dict[str, str], threshold: float, extreme_value: float) -> str:
+    """Demo-only 5% heuristic; not a risk score or a cross-signal severity scale.
+
+    A percentage of a Celsius threshold depends on the temperature scale. These
+    labels need signal-specific calibration before use with real hardware.
+    """
     breach = extreme_value - threshold if rule["operator"] == "above" else threshold - extreme_value
     return "Priority review" if breach / threshold >= 0.05 else "Review"
 

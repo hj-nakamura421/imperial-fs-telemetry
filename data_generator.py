@@ -1,8 +1,9 @@
 """Generate a synthetic Formula Student drivetrain test session.
 
-The sample intentionally contains three review scenarios: motor over-temperature,
-inverter over-temperature, and pack-voltage sag. It is a demonstration dataset,
-not an official team log.
+The sample couples mechanical and electrical power using a chosen efficiency
+and a simple baseline pack-resistance model. Temperature excursions and an extra
+voltage drop are injected review scenarios, not calibrated thermal or battery
+predictions. It is a demonstration dataset, not an official team log.
 """
 
 from pathlib import Path
@@ -57,10 +58,12 @@ def generate() -> pd.DataFrame:
     motor_temp_c = 60 + 3 * lap_num + 5 * np.sin(2 * np.pi * lap_phase) + rng.normal(0, 1.2, samples)
     inverter_temp_c = 45 + 2.5 * lap_num + 3 * np.sin(2 * np.pi * lap_phase + 0.8) + rng.normal(0, 1, samples)
 
-    # Deliberate review windows; these remain labelled as synthetic in the UI/README.
+    # Scripted thermal excursions, not a calibrated heat-transfer simulation.
     motor_temp_c[(time_s >= 220) & (time_s < 260)] += 45
     inverter_temp_c[(time_s >= 340) & (time_s < 360)] += 35
     sag_window = (time_s >= 460) & (time_s < 470)
+    # Impose an extra drop beyond the baseline resistance model, then preserve
+    # the demanded electrical power by recalculating current in this window.
     pack_voltage_v[sag_window] -= 65
     pack_current_a[sag_window] = electrical_power_w[sag_window] / pack_voltage_v[sag_window]
 
