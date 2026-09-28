@@ -44,7 +44,7 @@ The [generator](data_generator.py) produces a deterministic ten-lap, 10 Hz sessi
 
 - **Mechanical power:** `P_mech = torque × RPM × (2π / 60) / 1000` in kW.
 - **Electrical demand:** `P_elec = P_mech / 0.91`, using an assumed constant 91% drivetrain efficiency.
-- **Baseline pack model:** `V_pack = 600 − I × 0.05`, with voltage in V, current in A and resistance in Ω. Current is solved from `P_elec = V_pack × I`.
+- **Baseline pack model:** `V_pack = 600 − I × 0.05`, with voltage in V, current in A and resistance in Ω. Current is solved from `1000 × P_elec = V_pack × I`, converting the electrical demand from kW to W.
 
 To exercise the review workflow, the generator injects motor heating at 220–260 s, inverter heating at 340–360 s, and an extra 65 V pack-voltage drop at 460–470 s. In the sag window, current is recalculated to preserve the electrical power demand; the extra drop is an imposed scenario, not a prediction from the fixed-resistance model. Temperatures are scripted signals, not outputs of a calibrated thermal model.
 
